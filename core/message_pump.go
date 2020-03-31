@@ -26,6 +26,25 @@ type Dispatcher interface {
 	Dispatch(*Message) error
 }
 
+// BrokerBinding is how we glue the machinery of message
+// pump and handler manager integration to a particular broker
+// with rest of the system.
+type BrokerBinding interface {
+	Start(context.Context)
+	Done() <-chan error
+}
+
+// Config of common knobs.
+type Config struct {
+	RetryCount          int
+	RetryDelay          time.Duration
+	MaxHandlers         int
+	HandlerURL          string
+	HandlerCommand      string
+	HandlerArgs         []string
+	StartupDelaySeconds int
+}
+
 type MessagePump struct {
 	QueueService QueueService
 	Dispatcher   Dispatcher
